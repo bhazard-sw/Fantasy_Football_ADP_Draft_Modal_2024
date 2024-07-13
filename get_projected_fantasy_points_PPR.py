@@ -1,54 +1,45 @@
-# Importing Pandas for use of Dataframes
+
 import pandas as pd
 
-# Creating the datafeed and reading from a .csv file hosted on a public GitHub
-df = pd.read_csv('https://raw.githubusercontent.com/bhazard-sw/Fantasy_Football_ADP_Draft_Modal_2024/main/BetIQ_Projected_NFL_Player_Stats_6-24-26-2026%20(2).csv')
+def get_projected_fantasypoints_dataframe():
+    # Creating the datafeed and reading from a .csv file hosted on a public GitHub
+    proj_df = pd.read_csv(
+        'https://raw.githubusercontent.com/bhazard-sw/Fantasy_Football_ADP_Draft_Modal_2024/main/BetIQ_Projected_NFL_Player_Stats_6-24-26-2026%20(2).csv')
 
-# Making sure the dataframe is working
-print(df.head())
+    # Since we only care about the skill positions and our dataframe includes non, we will filter
+    skill_positions = ['QB', 'WR', 'TE', 'RB']
 
-print(df.info())
+    proj_df = proj_df.loc[proj_df['Pos'].isin(skill_positions)]
 
-# Since we only care about the skill positions and our dataframe includes non, we will filter
-skill_positions = ['QB', 'WR', 'TE', 'RB']
+    # Our numeric values are coming up as objects, so converting
+    proj_df['PassingYds'] = pd.to_numeric(proj_df['PassingYds'], errors='coerce')
+    proj_df['PassingTD'] = pd.to_numeric(proj_df['PassingTD'], errors='coerce')
+    proj_df['Int'] = pd.to_numeric(proj_df['Int'], errors='coerce')
+    proj_df['RushingYds'] = pd.to_numeric(proj_df['RushingYds'], errors='coerce')
+    proj_df['RushingTD'] = pd.to_numeric(proj_df['RushingTD'], errors='coerce')
+    proj_df['Receptions'] = pd.to_numeric(proj_df['Receptions'], errors='coerce')
+    proj_df['ReceivingYds'] = pd.to_numeric(proj_df['ReceivingYds'], errors='coerce')
+    proj_df['ReceivingTD'] = pd.to_numeric(proj_df['ReceivingTD'], errors='coerce')
 
-df = df.loc[df['Pos'].isin(skill_positions)]
+    # These are how fantasy points are weighted for PPR (Points Per Reception)
+    scoring_weights = {
+        'receptions': 1.0,  # PPR
+        'receiving_yds': 0.1,
+        'receiving_td': 6,
+        'rushing_yds': 0.1,
+        'rushing_td': 6,
+        'passing_yds': 0.04,
+        'passing_td': 4,
+        'int': -2
+    }
 
-print(df.head())
-pd.set_option('display.max_rows', 500)
-pd.set_option('display.max_columns', 500)
-pd.set_option('display.width', 150)
-print(df)
+    # Doing arithmatic on stats and hosting them in a new colum called FantasyPoints
 
-# Our numeric values are coming up as objects, so converting
-df['PassingYds'] = pd.to_numeric(df['PassingYds'], errors='coerce')
-df['PassingTD'] = pd.to_numeric(df['PassingTD'], errors='coerce')
-df['Int'] = pd.to_numeric(df['Int'], errors='coerce')
-df['RushingYds'] = pd.to_numeric(df['RushingYds'], errors='coerce')
-df['RushingTD'] = pd.to_numeric(df['RushingTD'], errors='coerce')
-df['Receptions'] = pd.to_numeric(df['Receptions'], errors='coerce')
-df['ReceivingYds'] = pd.to_numeric(df['ReceivingYds'], errors='coerce')
-df['ReceivingTD'] = pd.to_numeric(df['ReceivingTD'], errors='coerce')
-print(df.dtypes)
+    proj_df['FantasyPoints'] = (
+            proj_df['Receptions'] * scoring_weights['receptions'] + proj_df['ReceivingYds'] * scoring_weights['receiving_yds'] +
+            proj_df['ReceivingTD'] * scoring_weights['receiving_td'] +
+            proj_df['RushingYds'] * scoring_weights['rushing_yds'] + proj_df['RushingTD'] * scoring_weights['rushing_td'] +
+            proj_df['PassingYds'] * scoring_weights['passing_yds'] + proj_df['PassingTD'] * scoring_weights['passing_td'] +
+            proj_df['Int'] * scoring_weights['int'])
 
-scoring_weights = {
-    'receptions': 1.0, # PPR
-    'receiving_yds': 0.1,
-    'receiving_td': 6,
-    'rushing_yds': 0.1,
-    'rushing_td': 6,
-    'passing_yds': 0.04,
-    'passing_td': 4,
-    'int': -2
-}
-
-# Doing arithmatic on stats and hosting them in a new colum called FantasyPoints
-
-df['FantasyPoints'] = (
-    df['Receptions']*scoring_weights['receptions'] + df['ReceivingYds']*scoring_weights['receiving_yds'] +
-    df['ReceivingTD']*scoring_weights['receiving_td'] +
-    df['RushingYds']*scoring_weights['rushing_yds'] + df['RushingTD']*scoring_weights['rushing_td'] +
-    df['PassingYds']*scoring_weights['passing_yds'] + df['PassingTD']*scoring_weights['passing_td'] +
-    df['Int']*scoring_weights['int'])
-
-print(df.head())
+    return proj_df
