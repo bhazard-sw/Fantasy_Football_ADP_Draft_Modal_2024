@@ -23,6 +23,7 @@ By utilizing these tools, fantasy football managers can optimize their draft str
   - [get_replacement_values.py](#get_replacement_valuespy)
   - [get_player_VOR.py](#get_player_vorpy)
 - [Data Sources](#data-sources)
+- [Fute Updates](#future-updates)
 
 ## Installation
 
@@ -80,3 +81,9 @@ By utilizing these tools, fantasy football managers can optimize their draft str
 
 - **ADP Data:** [Underdog NFL ADP](https://raw.githubusercontent.com/bhazard-sw/Fantasy_Football_ADP_Draft_Modal_2024/main/Underdog_NFL_ADP_6-26-2024.csv)
 - **Projected Fantasy Points:** [BetIQ Projected NFL Player Stats](https://raw.githubusercontent.com/bhazard-sw/Fantasy_Football_ADP_Draft_Modal_2024/main/BetIQ_Projected_NFL_Player_Stats_6-24-26-2026%20(2).csv)
+
+### Fute Updates
+
+- **Update 1:** 'Add varying data sources'
+  **Update 2:** 'Automatically search through sources and generalize the data'
+
