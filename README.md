@@ -1,89 +1,82 @@
-Fantasy Football ADP DataFrame
-This script creates a DataFrame of ranked top Average Draft Pick (ADP) values for fantasy football players. It currently sources data from Underdog and is designed to be extensible for additional sources in the future.
 
-Function: get_adp_dataframe
-Purpose
-The get_adp_dataframe function reads ADP data from a CSV file, processes it, and returns a DataFrame containing the top players based on their ADP rank.
+# Fantasy Football Value Over Replacement (VOR) Analysis
 
-Parameters
-cutoff (int): The number of top players to include in the returned DataFrame.
-Function Workflow
-Load Data:
+## Overview
 
-The function reads a CSV file from a specified URL (currently sourcing from Underdog).
-DataFrame Generalization:
+This project is a comprehensive Draft Package for fantasy football enthusiasts. It includes tools to analyze player data and make informed drafting decisions. Key features of the package include:
 
-Renames columns to maintain consistency and readability:
-'Name' to 'Player'
-'Position' to 'Pos'
-'Underdog' to 'Current ADP'
-Drops the 'PosRk' column as it is not required for the current analysis.
-ADP Ranking:
+- **ADP Chart:** Provides insights into Average Draft Positions (ADP) for players.
+- **VOR Chart:** Calculates and visualizes Value Over Replacement (VOR) to identify player value.
+- **Sleeper Players:** Highlights players with potential undervaluation based on ADP and VOR analysis.
+- **Overvalued Players:** Identifies players who may be drafted too early based on their ADP and VOR rankings.
 
-Adds a new column 'ADP Rank' to represent the rank of each player's ADP value in ascending order.
-DataFrame Cutoff:
+By utilizing these tools, fantasy football managers can optimize their draft strategies and build competitive teams.
 
-Slices the DataFrame to include only the top players up to the specified cutoff.
-Return:
+## Table of Contents
 
-Returns the processed and sliced DataFrame.
+- [Installation](#installation)
+- [Usage](#usage)
+- [Functions](#functions)
+  - [get_top_adp.py](#get_top_adppy)
+  - [get_projected_fantasy_points_PPR.py](#get_projected_fantasy_points_pprpy)
+  - [get_replacement_players.py](#get_replacement_playerspy)
+  - [get_replacement_values.py](#get_replacement_valuespy)
+  - [get_player_VOR.py](#get_player_vorpy)
+- [Data Sources](#data-sources)
 
+## Installation
 
+1. Clone the repository:
 
-----------------------------------------------------------------------------------------------------------------------------------------
+   ```sh
+   git clone https://github.com/yourusername/fantasy-football-vor.git
+   ```
 
+2. Install the required packages:
 
-Fantasy Football Projected Fantasy Points DataFrame
-This script processes projected fantasy football player statistics from a CSV file and calculates their projected fantasy points based on a specific scoring system. It focuses on skill positions (QB, WR, TE, RB).
+   ```sh
+   pip install -r pandas
+   pip install -r seaborn
+   ```
 
-Function: get_projected_fantasypoints_dataframe
-Purpose
-The get_projected_fantasypoints_dataframe function reads player statistics from a CSV file, filters for skill positions, converts relevant columns to numeric types, calculates projected fantasy points, and returns the processed DataFrame.
+## Usage
 
-Parameters
-This function does not take any parameters.
+1. Ensure you have the necessary CSV files from the specified data sources.
 
-Function Workflow
-Load Data:
+2. Run the `main.py` script to execute the analysis:
 
-Reads a CSV file from a specified URL (sourcing from BetIQ).
-Filter Skill Positions:
+   ```sh
+   python main.py
+   ```
 
-Filters the DataFrame to include only the skill positions: QB, WR, TE, and RB.
-Display Initial Data:
+## Functions
 
-Prints the initial rows of the DataFrame and sets display options to show more rows and columns.
-Convert Data Types:
+### get_top_adp.py
 
-Converts relevant columns to numeric types to ensure accurate calculations:
-'PassingYds'
-'PassingTD'
-'Int'
-'RushingYds'
-'RushingTD'
-'Receptions'
-'ReceivingYds'
-'ReceivingTD'
-Define Scoring Weights:
+- **Function:** `get_adp_dataframe(cutoff)`
+- **Purpose:** Fetches and processes the Average Draft Position (ADP) data from a specified CSV file. The ADP data is then ranked and truncated to the top players based on the cutoff value.
 
-Defines the scoring system for calculating fantasy points:
-1 point per reception (PPR)
-0.1 points per receiving yard
-6 points per receiving touchdown
-0.1 points per rushing yard
-6 points per rushing touchdown
-0.04 points per passing yard
-4 points per passing touchdown
--2 points per interception
-Calculate Fantasy Points:
+### get_projected_fantasy_points_PPR.py
 
-Performs arithmetic operations on the stats to calculate the projected fantasy points and stores them in a new column 'FantasyPoints'.
-Display Processed Data:
+- **Function:** `get_projected_fantasypoints_dataframe()`
+- **Purpose:** Fetches and processes projected fantasy points data for skill positions (QB, WR, TE, RB) from a specified CSV file. Calculates fantasy points using PPR (Points Per Reception) scoring.
 
-Prints the processed DataFrame.
-Return:
+### get_replacement_players.py
 
-Returns the processed DataFrame.
+- **Function:** `get_replacement_players_dictionary(adp_df)`
+- **Purpose:** Identifies the replacement players for each position from the ADP data, representing the lowest-ranked player in the top 100.
 
+### get_replacement_values.py
 
--------------------------------------------------------------------------------------------------------------------
+- **Function:** `get_replacement_vales_dictionary(proj_df, replacement_players)`
+- **Purpose:** Calculates the fantasy points for each replacement player, creating a dictionary of replacement values by position.
+
+### get_player_VOR.py
+
+- **Function:** `get_player_VOR_dataframe(proj_df, replacement_values)`
+- **Purpose:** Calculates the Value Over Replacement (VOR) for each player and ranks them accordingly. Normalizes the VOR values and provides descriptive statistics.
+
+## Data Sources
+
+- **ADP Data:** [Underdog NFL ADP](https://raw.githubusercontent.com/bhazard-sw/Fantasy_Football_ADP_Draft_Modal_2024/main/Underdog_NFL_ADP_6-26-2024.csv)
+- **Projected Fantasy Points:** [BetIQ Projected NFL Player Stats](https://raw.githubusercontent.com/bhazard-sw/Fantasy_Football_ADP_Draft_Modal_2024/main/BetIQ_Projected_NFL_Player_Stats_6-24-26-2026%20(2).csv)
